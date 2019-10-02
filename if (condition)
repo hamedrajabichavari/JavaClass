@@ -1,0 +1,58 @@
+public class Main {
+    public static void main(String[] args) {
+      
+        int year = 2019;
+        //year = year +1;
+        //year ++;
+        System.out.println(year += 1);
+        System.out.println(year += 1);
+
+        year %= 2; // year % 2 = ???
+        System.out.println(year);
+
+        //Conditions
+        //if blocks
+        int age = 18;
+
+        if (age >= 120) {
+            System.out.println("sorry you are dead");
+        } else if (age >= 18) {
+            System.out.println("you are adult");
+        } else {
+            System.out.println("you are NOT adult");
+        }
+
+        boolean isLighton = false;
+        //if(isLighton == true )
+        if (isLighton) {
+            System.out.println("can you turn off the light?");
+        } else {
+            System.out.println("can you turn on the light?");
+        }
+
+        int sudentMark=90;
+        double gpa;
+
+        //2 ways for if & else
+        //First way
+//        if(sudentMark>=80){
+//            gpa = 4.0;
+//        }else{
+//            gpa = 3.0;
+//        }
+
+        //Second way
+        gpa = sudentMark >= 80 ? 4.0 :3.0;
+        System.out.println("the student's gpa is "+gpa);
+
+        int a = 1;
+        boolean go;
+//        if (a == 1){
+//            go = true;
+//        }else{
+//            go = false;
+//        }
+        go = a ==1 ? true:false;
+        System.out.println(go);
+    }
+}
