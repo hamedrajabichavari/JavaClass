@@ -1,0 +1,57 @@
+public class Main {
+    public static void main(String[] args) {
+
+        // store this "world" in a variable
+        //type of variable = "World"
+//        String anyName = "World";
+//        System.out.println("Hello "+anyName);
+//        System.out.println("I love java");
+//
+//        //byte short int long
+//        // 8    16   32  64
+//        byte byteNumber = 127;
+//        short shortNumber = Short.MAX_VALUE;
+//        int intNumberMin = Integer.MIN_VALUE;
+//        int intNumberMax = Integer.MAX_VALUE;
+//        String name = "saygin";
+//        System.out.println(name);
+//        int num = -2147483648 -2;
+//        System.out.println(num);
+//        long longValue = 774872546217L;
+//        double coffeePrice = 2.75;
+//        float teaPrice = 2.99f; // f is a must
+//        int coffee = (int)coffeePrice;
+//        System.out.println("the coffee price is " + coffee);
+//        System.out.println("the rounded tea price is " + Math.round(teaPrice));
+//
+//
+//        System.out.println("byte max value is "+ byteNumber);
+//        System.out.println("short max value is "+ shortNumber);
+//        System.out.println("int min value is "+ intNumberMin);
+//        System.out.println("int max value is "+ intNumberMax);
+
+        //different ways to
+        System.out.println((double) 25 / 2);
+        System.out.println(25.0 / 2);
+        System.out.println(25d / 2);
+        System.out.println((int) (25f / 2));
+
+        int test = (int) Math.pow(2, 32);
+        System.out.println(test);
+
+        //there is some problem with double values in java
+        double dVal = .012;
+        double sum = dVal + dVal + dVal;
+        System.out.println(sum); // sum = 0.036000000000000004 !!! wrong
+
+        //the soloution is using of BigDecimal
+        BigDecimal bigValue = new BigDecimal(Double.toString(dVal));
+        BigDecimal total = bigValue.add(bigValue).add(bigValue);
+        System.out.println(total);
+
+        boolean isLighton = true;
+        boolean amINotSleeping = !isLighton;
+        System.out.println("is light on "+ isLighton);
+        System.out.println("am I sleeping " +amINotSleeping);
+    }
+}
