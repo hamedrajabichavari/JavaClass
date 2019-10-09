@@ -26,6 +26,9 @@ public class Main {
 
         Assignment1.perfectNumber(6);
         Assignment1.perfectNumber(5);
+        for(int i = 1 ; i < 1000 ; i +=1){
+            Assignment1.perfectNumber(i);
+        }
     }
 
     }

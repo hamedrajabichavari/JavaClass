@@ -37,7 +37,7 @@ public class Assignment1 {
     static void perfectNumber (int number){
 
         if(number == 1 ){
-            System.out.println("It is a aperfect number");
+//            System.out.println("It is not a aperfect number");
         }else {
             int sum = 0;
             for (int i = number-1; i > 0; i -= 1) {
@@ -48,9 +48,10 @@ public class Assignment1 {
             if( sum == number) {
                 System.out.println(number + " is a perfect number");
             }else{
-                System.out.println(number + " is not a perfect number");
+//                System.out.println(number + " is not a perfect number");
             }
         }
+
 
 }
 
