@@ -125,6 +125,28 @@ public class ArrayExample {
                 }
             }
         }
+        System.out.println("------------------");
+
+        int[] primeNumbers = new int [] {2,3,5,7,11,13,17,19,23};
+//        int[] reference = primeNumbers;
+//
+//        System.out.println(reference[2]);//5
+//        reference[2] = 0;
+//        System.out.println(primeNumbers[2]);//0
+
+
+        int[] reverse = new int[primeNumbers.length];
+        for (int i = 0; i < primeNumbers.length; i += 1) {
+            reverse[i] =primeNumbers[primeNumbers.length-1 - i];
+        }
+        for (int i = 0; i < primeNumbers.length; i += 1) {
+            System.out.print(primeNumbers[i] + " ");
+        }
+        System.out.println(" ");
+        for (int i = 0; i < primeNumbers.length; i += 1) {
+            System.out.print(reverse[i] + " ");
+        }
+
 
     }
 }
