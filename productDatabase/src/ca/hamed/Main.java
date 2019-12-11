@@ -29,18 +29,18 @@ public class Main {
             System.out.println("___________________________________________");
             System.out.println("What do you want to do ? please select one");
             System.out.println("___________________________________________");
-            System.out.println("1 - Create");
-            System.out.println("2 - Read");
-            System.out.println("3 - Update");
-            System.out.println("4 - Delete");
+            System.out.println("\u001B[32m"+"1 - CREATE");
+            System.out.println("\u001B[36m"+"2 - READ");
+            System.out.println("\u001B[35m"+"3 - UPDATE");
+            System.out.println("\u001B[31m"+"4 - DELETE"+"\u001B[37m");
 
             int userChoice = sn.nextInt();
 
             switch (userChoice) {
                 case 1: {
 
-                        System.out.println("1 - Create a product");
-                        System.out.println("2 - Create a customer");
+                        System.out.println("\u001B[32m"+"1 - Create a product");
+                        System.out.println("\u001B[32m"+"2 - Create a customer"+"\u001B[37m");
 
                         int userChoice1 = sn.nextInt();
                         sn.nextLine();
@@ -108,8 +108,9 @@ public class Main {
 
                 case 2: {
 
-                    System.out.println("1 - Read products");
-                    System.out.println("2 - Read customers");
+                    System.out.println("\u001B[36m"+"1 - Read products");
+                    System.out.println("\u001B[36m"+"2 - Read customers");
+                    System.out.println("\u001B[36m"+"1 - Read categories"+"\u001B[37m");
 
                     int userChoice1 = sn.nextInt();
                     sn.nextLine();
@@ -117,26 +118,32 @@ public class Main {
                     switch (userChoice1) {
                         case 1: {
 
-                            List<Product> productList = new ArrayList<>();
-                            productList = ds.queryProducts();
+//                            List<Product> productList = new ArrayList<>();
+//                            productList = ds.queryProducts();
+                            ds.queryProducts();
 
-                            for(Product product : productList){
-                                System.out.println(product.toString());
-                            }
+//                            for(Product product : productList){
+//                                System.out.println(product.toString());
+//                            }
 
                             break;
                         }
 
                         case 2: {
 
-                            List<Customer> customerList = new ArrayList<>();
-                            customerList = ds.queryCustomers();
+//                            List<Customer> customerList = new ArrayList<>();
+//                            customerList = ds.queryCustomers();
+                            ds.queryCustomers();
 
-                            for(Customer customer : customerList){
-                                System.out.println(customer.toString());
-                            }
+//                            for(Customer customer : customerList){
+//                                System.out.println(customer.toString());
+//                            }
 
                             break;
+                        }
+
+                        case 3: {
+                            ds.queryCategory();
                         }
 
                         default:
@@ -150,8 +157,8 @@ public class Main {
 
                 case 3: {
 
-                    System.out.println("1 - Update products");
-                    System.out.println("2 - Update customers");
+                    System.out.println("\u001B[35m"+"1 - Update products");
+                    System.out.println("\u001B[35m"+"2 - Update customers"+"\u001B[37m");
 
                     int userChoice1 = sn.nextInt();
                     sn.nextLine();
@@ -199,8 +206,8 @@ public class Main {
 
                 case 4: {
 
-                    System.out.println("1 - Delete a product");
-                    System.out.println("2 - Delete a customer");
+                    System.out.println("\u001B[31m"+"1 - Delete a product");
+                    System.out.println("\u001B[31m"+"2 - Delete a customer"+"\u001B[37m");
 
                     int userChoice1 = sn.nextInt();
                     sn.nextLine();
@@ -249,6 +256,14 @@ public class Main {
         } while (!exit);
 
         sn.close();
+
+        ds.close();
+    }
+
+}
+
+
+
 //    }
 
 
@@ -335,8 +350,3 @@ public class Main {
 //        ds.close();
 //    }
 
-
-    ds.close();
-    }
-
-}

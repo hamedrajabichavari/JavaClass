@@ -147,86 +147,180 @@ public class Datasource {
         }
     }
 
-    public List<Product> queryProducts() {
+    public void queryProducts() {
 
-        List<Product> pl = new ArrayList<>();
         try {
-
             ResultSet rs = queryProductsInfo.executeQuery();
 
+            System.out.println("\u001B[36m" + "_________________________________________________PRODUCTS TABLE_________________________________________________");
+            System.out.println("________________________________________________________________________________________________________________");
+            System.out.format("%-8s %-18s %-52s %-8s %-8s\n", "id", "name", "description", "price", "currency_id");
+            System.out.println("________________________________________________________________________________________________________________");
             while (rs.next()) {
-                pl.add(new Product(
-                                rs.getInt("id"),
-                                rs.getString("name"),
-                                rs.getString("description"),
-                                rs.getDouble("price"),
-                                rs.getInt("currency_id")
-                        )
+                System.out.format("%-8s %-18s %-52s %-8s %-8s\n",
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getString("description"),
+                        rs.getDouble("price"),
+                        rs.getInt("currency_id")
                 );
             }
+            System.out.println("\u001B[37m");
 
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
-            return null;
         }
 
-        return pl;
 
     }
 
-    public List<Category> queryCategory() {
 
-        List<Category> cl = new ArrayList<>();
+//
+//
+//    public List<Product> queryProducts() {
+//
+//        List<Product> pl = new ArrayList<>();
+//        try {
+//
+//            ResultSet rs = queryProductsInfo.executeQuery();
+//
+//            while (rs.next()) {
+//                pl.add(new Product(
+//                                rs.getInt("id"),
+//                                rs.getString("name"),
+//                                rs.getString("description"),
+//                                rs.getDouble("price"),
+//                                rs.getInt("currency_id")
+//                        )
+//                );
+//            }
+//
+//
+//        } catch (SQLException e) {
+//            System.out.println(e.getMessage());
+//            return null;
+//        }
+//
+//        return pl;
+//
+//    }
+
+
+
+    public void queryCategory() {
+
         try {
             ResultSet rs = queryCategoryInfo.executeQuery();
 
+            System.out.println("\u001B[36m" + "______________CATEGORIES TABLE________________");
+            System.out.println("______________________________________________");
+            System.out.format("%-8s %-15s %-8s\n", "id", "name", "sub_category_id");
+            System.out.println("______________________________________________");
             while (rs.next()) {
-                cl.add(new Category(
-                                rs.getInt("id"),
-                                rs.getString("name"),
-                                rs.getInt("sub_category_id")
-                        )
+                System.out.format("%-8s %-15s %-8s\n",
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getInt("sub_category_id")
                 );
             }
+            System.out.println("\u001B[37m");
 
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
-            return null;
         }
 
-        return cl;
 
     }
 
-    public List<Customer> queryCustomers() {
 
-        List<Customer> cl = new ArrayList<>();
+
+
+
+//    public List<Category> queryCategory() {
+//
+//        List<Category> cl = new ArrayList<>();
+//        try {
+//            ResultSet rs = queryCategoryInfo.executeQuery();
+//
+//            while (rs.next()) {
+//                cl.add(new Category(
+//                                rs.getInt("id"),
+//                                rs.getString("name"),
+//                                rs.getInt("sub_category_id")
+//                        )
+//                );
+//            }
+//
+//
+//        } catch (SQLException e) {
+//            System.out.println(e.getMessage());
+//            return null;
+//        }
+//
+//        return cl;
+//
+//    }
+
+
+    public void queryCustomers() {
 
         try {
             ResultSet rs = queryCustomersInfo.executeQuery();
 
+            System.out.println("\u001B[36m" + "_________________________________________________CUSTOMERS TABLE_________________________________________________");
+            System.out.println("________________________________________________________________________________________________________________");
+            System.out.format("%-8s %-22s %-35s %-20s %-25s\n", "id", "name", "email", "address", "phone");
+            System.out.println("________________________________________________________________________________________________________________");
             while (rs.next()) {
-                cl.add(new Customer(
+                System.out.format("%-8s %-22s %-35s %-20s %-20s\n",
                                 rs.getInt("id"),
                                 rs.getString("name"),
                                 rs.getString("email"),
                                 rs.getString("address"),
                                 rs.getString("phone")
-                        )
                 );
             }
+            System.out.println("\u001B[37m");
 
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
-            return null;
         }
 
-        return cl;
 
     }
+
+
+
+//    public List<Customer> queryCustomers() {
+//
+//        List<Customer> cl = new ArrayList<>();
+//
+//        try {
+//            ResultSet rs = queryCustomersInfo.executeQuery();
+//
+//            while (rs.next()) {
+//                cl.add(new Customer(
+//                                rs.getInt("id"),
+//                                rs.getString("name"),
+//                                rs.getString("email"),
+//                                rs.getString("address"),
+//                                rs.getString("phone")
+//                        )
+//                );
+//            }
+//
+//
+//        } catch (SQLException e) {
+//            System.out.println(e.getMessage());
+//            return null;
+//        }
+//
+//        return cl;
+//
+//    }
 
     public void queryProductCategory() {
 
@@ -416,6 +510,9 @@ public class Datasource {
 
 
             int affectedRows = updateProducts.executeUpdate();
+            if (affectedRows == 1) {
+                System.out.println("updated successfully");
+            }
 
             if (affectedRows != 1) {
                 throw new SQLException("Couldn't update product!");
@@ -428,14 +525,8 @@ public class Datasource {
 
 
 
-
-
-
-
     public void deleteProductCategory(String productName) throws SQLException {
 
-
-//            int productId = queryProduct.setString(1,productName);
 
         queryProduct.setString(1, productName);
         ResultSet results = queryProduct.executeQuery();
@@ -450,13 +541,16 @@ public class Datasource {
 
             int affectedRows = deleteProductCategories.executeUpdate();
             int affectedRows2 = deleteProducts.executeUpdate();
+            if (affectedRows == 1) {
+                System.out.println("Commitment completed successfully");
+            }
 
             if (affectedRows != 1) {
-                throw new SQLException("Couldn't update product_category!");
+                throw new SQLException("Couldn't delete product_category!");
             }
 
             if (affectedRows2 != 1) {
-                throw new SQLException("Couldn't update product");
+                throw new SQLException("Couldn't delete product");
             }
 
         } else {
@@ -488,6 +582,9 @@ public class Datasource {
             //this returns integer
             //execute will return boolean
             int affectedRows = insertIntoCustomers.executeUpdate();
+            if (affectedRows == 1) {
+                System.out.println("Commitment completed successfully");
+            }
 
             if (affectedRows != 1) {
                 throw new SQLException("Couldn't insert customer!");
@@ -517,6 +614,9 @@ public class Datasource {
 
 
             int affectedRows = updateCustomers.executeUpdate();
+            if (affectedRows == 1) {
+                System.out.println("updated successfully");
+            }
 
             if (affectedRows != 1) {
                 throw new SQLException("Couldn't update product!");
@@ -533,28 +633,29 @@ public class Datasource {
     public void deleteCustomers(String customerEmail) throws SQLException {
 
 
-//            int productId = queryProduct.setString(1,productName);
-
         queryCustomer.setString(1, customerEmail);
         ResultSet results = queryCustomer.executeQuery();
 
         if (results.next()) {
 
             int customer_id = results.getInt("id");
-            //update products set active = 0 where id = products_id
+            //update customers set active = 0 where id = customer_id
             deleteCustomers.setInt(1,customer_id);
             deleteCards.setInt(1, customer_id);
 //            deleteProductCategories.executeQuery();
 
             int affectedRows = deleteCustomers.executeUpdate();
             int affectedRows2 = deleteCards.executeUpdate();
-
-            if (affectedRows != 1) {
-                throw new SQLException("Couldn't update customer!");
+            if (affectedRows == 1) {
+                System.out.println("deleted successfully");
             }
 
-            if (affectedRows2 != 1) {
-                throw new SQLException("Couldn't update customer");
+//            if (affectedRows != 1) {
+//                throw new SQLException("Couldn't delete customer!");
+//            }
+
+//            if (affectedRows2 != 1) {
+                else {throw new SQLException("Couldn't delete customer");
             }
 
         } else {
