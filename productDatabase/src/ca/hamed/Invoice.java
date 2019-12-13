@@ -5,16 +5,14 @@ public class Invoice {
     private int customer_id;
     private String name;
     private String due_date;
-    private Invoice_details value;
     private int isPaid;
     private String payMethod;
 
-    public Invoice(int id, int customer_id, String name, String due_date, Invoice_details value, int isPaid, String payMethod) {
+    public Invoice(int id, int customer_id, String name, String due_date, int isPaid, String payMethod) {
         this.id = id;
         this.customer_id = customer_id;
         this.name = name;
         this.due_date = due_date;
-        this.value = value;
         this.isPaid = isPaid;
         this.payMethod = payMethod;
     }
@@ -51,14 +49,6 @@ public class Invoice {
         this.due_date = due_date;
     }
 
-    public Invoice_details getValue() {
-        return value;
-    }
-
-    public void setValue(Invoice_details value) {
-        this.value = value;
-    }
-
     public int getIsPaid() {
         return isPaid;
     }
@@ -82,7 +72,6 @@ public class Invoice {
                 ", customer_id=" + customer_id +
                 ", name='" + name + '\'' +
                 ", due_date='" + due_date + '\'' +
-                ", value=" + value +
                 ", isPaid=" + isPaid +
                 ", payMethod='" + payMethod + '\'' +
                 '}';

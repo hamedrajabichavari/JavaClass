@@ -19,8 +19,6 @@ public class Main {
             System.out.println("not connected to db");
         }
 
-
-
         boolean exit = false;
 
         Scanner sn = new Scanner(System.in);
@@ -32,8 +30,8 @@ public class Main {
             System.out.println("\u001B[32m"+"1 - CREATE");
             System.out.println("\u001B[36m"+"2 - READ");
             System.out.println("\u001B[35m"+"3 - UPDATE");
-            System.out.println("\u001B[31m"+"4 - DELETE"+"\u001B[37m");
-            System.out.println("5 - ADD TO CARD");
+            System.out.println("\u001B[31m"+"4 - DELETE");
+            System.out.println("\u001B[34m"+"5 - ADD TO CARD"+"\u001B[37m");
 
             int userChoice = sn.nextInt();
 
@@ -88,7 +86,6 @@ public class Main {
 
                                 try {
 
-//                                     ds.insertCustomer(customerName, customerEmail, customerAddress, customerPhone );
                                      ds.insertCard(customerName, customerEmail, customerAddress, customerPhone);
 
                                  } catch (SQLException e){
@@ -123,7 +120,7 @@ public class Main {
 //                            List<Product> productList = new ArrayList<>();
 //                            productList = ds.queryProducts();
                             ds.queryProducts();
-
+                            ds.queryProductCategoryCurrencies();
 //                            for(Product product : productList){
 //                                System.out.println(product.toString());
 //                            }
@@ -172,7 +169,7 @@ public class Main {
                             String productName = sn.nextLine();
                             try {
                                 if(ds.checkProducts(productName)) {
-                                    System.out.println("productPrice : ");
+                                    System.out.println("productNewPrice : ");
                                     double productPrice = sn.nextDouble();
                                     sn.nextLine();
                                     try {

@@ -156,12 +156,12 @@ public class Datasource {
         try {
             ResultSet rs = queryProductsInfo.executeQuery();
 
-            System.out.println("\u001B[36m" + "_________________________________________________PRODUCTS TABLE_________________________________________________");
-            System.out.println("________________________________________________________________________________________________________________");
-            System.out.format("%-8s %-18s %-52s %-8s %-8s\n", "id", "name", "description", "price", "currency_id");
-            System.out.println("________________________________________________________________________________________________________________");
+            System.out.println("\u001B[36m" + "_______________________________________________PRODUCTS TABLE_____________________________________________");
+            System.out.println("__________________________________________________________________________________________________________");
+            System.out.format("%-8s %-18s %-55s %-8s %-8s\n", "id", "name", "description", "price", "currency_id");
+            System.out.println("__________________________________________________________________________________________________________");
             while (rs.next()) {
-                System.out.format("%-8s %-18s %-52s %-8s %-8s\n",
+                System.out.format("%-8s %-18s %-55s %-12.2f %-8s\n",
                         rs.getInt("id"),
                         rs.getString("name"),
                         rs.getString("description"),
@@ -180,37 +180,6 @@ public class Datasource {
     }
 
 
-//
-//
-//    public List<Product> queryProducts() {
-//
-//        List<Product> pl = new ArrayList<>();
-//        try {
-//
-//            ResultSet rs = queryProductsInfo.executeQuery();
-//
-//            while (rs.next()) {
-//                pl.add(new Product(
-//                                rs.getInt("id"),
-//                                rs.getString("name"),
-//                                rs.getString("description"),
-//                                rs.getDouble("price"),
-//                                rs.getInt("currency_id")
-//                        )
-//                );
-//            }
-//
-//
-//        } catch (SQLException e) {
-//            System.out.println(e.getMessage());
-//            return null;
-//        }
-//
-//        return pl;
-//
-//    }
-
-
     public void queryCategory() {
 
         try {
@@ -221,7 +190,7 @@ public class Datasource {
             System.out.format("%-8s %-15s %-8s\n", "id", "name", "sub_category_id");
             System.out.println("______________________________________________");
             while (rs.next()) {
-                System.out.format("%-8s %-15s %-8s\n",
+                System.out.format("%-8s %-22s %-8s\n",
                         rs.getInt("id"),
                         rs.getString("name"),
                         rs.getInt("sub_category_id")
@@ -236,33 +205,6 @@ public class Datasource {
 
 
     }
-
-
-//    public List<Category> queryCategory() {
-//
-//        List<Category> cl = new ArrayList<>();
-//        try {
-//            ResultSet rs = queryCategoryInfo.executeQuery();
-//
-//            while (rs.next()) {
-//                cl.add(new Category(
-//                                rs.getInt("id"),
-//                                rs.getString("name"),
-//                                rs.getInt("sub_category_id")
-//                        )
-//                );
-//            }
-//
-//
-//        } catch (SQLException e) {
-//            System.out.println(e.getMessage());
-//            return null;
-//        }
-//
-//        return cl;
-//
-//    }
-
 
     public void queryCustomers() {
 
@@ -291,35 +233,6 @@ public class Datasource {
 
 
     }
-
-
-//    public List<Customer> queryCustomers() {
-//
-//        List<Customer> cl = new ArrayList<>();
-//
-//        try {
-//            ResultSet rs = queryCustomersInfo.executeQuery();
-//
-//            while (rs.next()) {
-//                cl.add(new Customer(
-//                                rs.getInt("id"),
-//                                rs.getString("name"),
-//                                rs.getString("email"),
-//                                rs.getString("address"),
-//                                rs.getString("phone")
-//                        )
-//                );
-//            }
-//
-//
-//        } catch (SQLException e) {
-//            System.out.println(e.getMessage());
-//            return null;
-//        }
-//
-//        return cl;
-//
-//    }
 
     public void queryProductCategory() {
 
@@ -352,9 +265,9 @@ public class Datasource {
 
 
             ResultSet rs = queryProductCategoryCurrenciesInfo.executeQuery();
-            System.out.println("___________________________________________________________________________________________________");
+            System.out.println("\u001B[36m" + "___________________________________________________________________________________________________");
             System.out.format("%-25s %-18s %-18s %-18s %-20s\n", "Product", "Price", "Price", "Price", "Category");
-            System.out.format("%-25s %-18s %-18s %-18s %-20s\n", "", "CAD", "USD", "JPY", "");
+            System.out.format("%-25s %-18s %-18s %-18s %-20s\n", "", "CAD", "USD", "IRR", "");
             System.out.println("___________________________________________________________________________________________________");
             while (rs.next()) {
                 System.out.format("%-25s %-18.2f %-18.2f %-18.2f %-20s\n",
@@ -366,7 +279,7 @@ public class Datasource {
                 );
             }
             System.out.println("_________________________________________________________________________________________________");
-
+            System.out.println("\u001B[37m");
 
         } catch (SQLException e) {
 
@@ -393,8 +306,6 @@ public class Datasource {
             insertIntoProducts.setInt(4, currency_id);
             insertIntoProducts.setString(5, new Timestamp(currentTimeMillis()).toString());
 
-            //this returns integer
-            //execute will return boolean
             int affectedRows = insertIntoProducts.executeUpdate();
 
             if (affectedRows != 1) {
@@ -450,10 +361,8 @@ public class Datasource {
             int productId = insertProduct(productName, productDescription, productPrice, currency_id);
             int categoryId = insertCategory(categoryName, subCategory);
 
-            //Check if exist on product category already
             queryProductCategory.setInt(1, productId);
             queryProductCategory.setInt(2, categoryId);
-            //new Timestamp(currentTimeMillis())
 
             ResultSet pc = queryProductCategory.executeQuery();
             if (pc.next()) {
@@ -564,12 +473,7 @@ public class Datasource {
             insertIntoCustomers.setString(4, phone);
             insertIntoCustomers.setString(5, new Timestamp(currentTimeMillis()).toString());
 
-            //this returns integer
-            //execute will return boolean
             int affectedRows = insertIntoCustomers.executeUpdate();
-            if (affectedRows == 1) {
-                System.out.println("Commitment completed successfully");
-            }
 
             if (affectedRows != 1) {
                 throw new SQLException("Couldn't insert customer!");
@@ -584,46 +488,6 @@ public class Datasource {
         }
 
     }
-
-
-//    public int insertCustomer(String name, String email, String address, String phone) throws SQLException {
-//
-//
-//        queryCustomer.setString(1, email);
-//        ResultSet results = queryCustomer.executeQuery();
-//
-//        if (results.next()) {
-//
-//            return results.getInt("id");
-//
-//        } else {
-//
-//            insertIntoCustomers.setString(1, name);
-//            insertIntoCustomers.setString(2, email);
-//            insertIntoCustomers.setString(3, address);
-//            insertIntoCustomers.setString(4, phone);
-//            insertIntoCustomers.setString(5, new Timestamp(currentTimeMillis()).toString());
-//
-//            //this returns integer
-//            //execute will return boolean
-//            int affectedRows = insertIntoCustomers.executeUpdate();
-//            if (affectedRows == 1) {
-//                System.out.println("Commitment completed successfully");
-//            }
-//
-//            if (affectedRows != 1) {
-//                throw new SQLException("Couldn't insert customer!");
-//            }
-//
-//            ResultSet generatedKeys = insertIntoCustomers.getGeneratedKeys();
-//            if (generatedKeys.next()) {
-//                return generatedKeys.getInt(1);
-//            } else {
-//                throw new SQLException("Couldn't get id for customer");
-//            }
-//        }
-//
-//    }
 
 
     public boolean checkProducts(String productName) throws SQLException {
@@ -715,27 +579,6 @@ public class Datasource {
     }
 
 
-//            if (affectedRows == 1) {
-//                System.out.println("Commitment completed successfully");
-//            }
-//
-//            if (affectedRows != 1) {
-//                throw new SQLException("Couldn't delete product_category!");
-//            }
-//
-//            if (affectedRows2 != 1) {
-//                throw new SQLException("Couldn't delete product");
-//            }
-//
-//        } else {
-//            System.out.println("product does not exist");
-//        }
-//    }
-
-
-    //inserting customer should insert card automaticaly
-
-    //change this method to a transaction
 
     public boolean checkCustomers(String customerEmail) throws SQLException {
 
@@ -874,23 +717,3 @@ public class Datasource {
 
 
 }
-
-
-//            if (affectedRows == 1) {
-//                System.out.println("deleted successfully");
-//            }
-//
-////            if (affectedRows != 1) {
-////                throw new SQLException("Couldn't delete customer!");
-////            }
-//
-////            if (affectedRows2 != 1) {
-//                else {throw new SQLException("Couldn't delete customer");
-//            }
-//
-//        } else {
-//            System.out.println("customer does not exist");
-//        }
-//    }
-//
-//}
