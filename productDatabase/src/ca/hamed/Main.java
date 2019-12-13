@@ -33,6 +33,7 @@ public class Main {
             System.out.println("\u001B[36m"+"2 - READ");
             System.out.println("\u001B[35m"+"3 - UPDATE");
             System.out.println("\u001B[31m"+"4 - DELETE"+"\u001B[37m");
+            System.out.println("5 - ADD TO CARD");
 
             int userChoice = sn.nextInt();
 
@@ -87,7 +88,8 @@ public class Main {
 
                                 try {
 
-                                     ds.insertCustomer(customerName, customerEmail, customerAddress, customerPhone );
+//                                     ds.insertCustomer(customerName, customerEmail, customerAddress, customerPhone );
+                                     ds.insertCard(customerName, customerEmail, customerAddress, customerPhone);
 
                                  } catch (SQLException e){
                                      System.out.println(e.getMessage());
@@ -168,14 +170,21 @@ public class Main {
 
                             System.out.println("productName : ");
                             String productName = sn.nextLine();
-                            System.out.println("productPrice : ");
-                            double productPrice = sn.nextDouble();
-                            sn.nextLine();
                             try {
-                                ds.updateProducts(productName , productPrice);
+                                if(ds.checkProducts(productName)) {
+                                    System.out.println("productPrice : ");
+                                    double productPrice = sn.nextDouble();
+                                    sn.nextLine();
+                                    try {
+                                        ds.updateProducts(productName, productPrice);
+                                    } catch (SQLException e) {
+                                        System.out.println(e.getMessage());
+                                    }
+                                }
                             } catch(SQLException e){
                                 System.out.println(e.getMessage());
                             }
+
 
                             break;
                         }
@@ -184,16 +193,23 @@ public class Main {
 
                             System.out.println("customerEmail : ");
                             String customerEmail = sn.nextLine();
-                            System.out.println("customerNewName : ");
-                            String customerNewName = sn.nextLine();
                             try {
-                                ds.updateCustomers(customerEmail , customerNewName);
+                                if (ds.checkCustomers(customerEmail)) {
+                                    System.out.println("customerNewName : ");
+                                    String customerNewName = sn.nextLine();
+                                    try {
+                                        ds.updateCustomers(customerEmail, customerNewName);
+                                    } catch (SQLException e) {
+                                        System.out.println(e.getMessage());
+                                    }
+                                }
                             } catch(SQLException e){
                                 System.out.println(e.getMessage());
                             }
 
-                            break;
-                        }
+                                break;
+                            }
+
 
                         default:
                             exit = true;
@@ -244,6 +260,25 @@ public class Main {
                             break;
                     };
 
+                    break;
+                }
+
+                case 5 : {
+
+                    sn.nextLine();
+                    System.out.println("customerEmail : ");
+                    String customerEmail = sn.nextLine();
+                    System.out.println("productName : ");
+                    String productName = sn.nextLine();
+                    System.out.println("quantity : ");
+                    int quantity = sn.nextInt();
+                    sn.nextLine();
+
+                    try{
+                        ds.insertCardDetails(customerEmail,productName,quantity);
+                    }catch(SQLException e){
+                        System.out.println(e.getMessage());
+                    }
                     break;
                 }
 

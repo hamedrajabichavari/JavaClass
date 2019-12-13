@@ -33,6 +33,8 @@ public class Datasource {
     private PreparedStatement updateCustomers;
     private PreparedStatement deleteCustomers;
     private PreparedStatement deleteCards;
+    private PreparedStatement insertIntocards;
+    private PreparedStatement insertIntoCard_details;
 
 
     public boolean open() {
@@ -73,7 +75,7 @@ public class Datasource {
 
             queryProduct = conn.prepareStatement("SELECT * FROM products WHERE name = ? AND active = 1");
             queryProductsInfo = conn.prepareStatement("SELECT * FROM products WHERE active = 1");
-            queryCard = conn.prepareStatement("SELECT * FROM cards WHERE active = 1");
+            queryCard = conn.prepareStatement("SELECT * FROM cards WHERE customer_id = ? AND active = 1");
             queryCategory = conn.prepareStatement("SELECT * FROM categories WHERE name = ? AND active = 1");
             queryCategoryInfo = conn.prepareStatement("SELECT * FROM categories WHERE active = 1");
             queryCustomersInfo = conn.prepareStatement("SELECT * FROM customers WHERE active = 1");
@@ -90,6 +92,8 @@ public class Datasource {
             updateCustomers = conn.prepareStatement("UPDATE customers SET name = ? WHERE id = ? ");
             deleteCustomers = conn.prepareStatement("UPDATE customers SET active = 0 WHERE id = ? ");
             deleteCards = conn.prepareStatement("UPDATE cards SET active = 0 WHERE customer_id = ? ");
+            insertIntocards = conn.prepareStatement("INSERT INTO cards (customer_id, created_at) VALUES (?, ?)");
+            insertIntoCard_details = conn.prepareStatement("INSERT INTO card_details (card_id, product_id, quantity, currency_id,total_amount, created_at) VALUES (? , ?, ?, ?, ?, ?)");
 
 
             return true;
@@ -207,7 +211,6 @@ public class Datasource {
 //    }
 
 
-
     public void queryCategory() {
 
         try {
@@ -233,9 +236,6 @@ public class Datasource {
 
 
     }
-
-
-
 
 
 //    public List<Category> queryCategory() {
@@ -275,11 +275,11 @@ public class Datasource {
             System.out.println("________________________________________________________________________________________________________________");
             while (rs.next()) {
                 System.out.format("%-8s %-22s %-35s %-20s %-20s\n",
-                                rs.getInt("id"),
-                                rs.getString("name"),
-                                rs.getString("email"),
-                                rs.getString("address"),
-                                rs.getString("phone")
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getString("email"),
+                        rs.getString("address"),
+                        rs.getString("phone")
                 );
             }
             System.out.println("\u001B[37m");
@@ -291,7 +291,6 @@ public class Datasource {
 
 
     }
-
 
 
 //    public List<Customer> queryCustomers() {
@@ -496,73 +495,59 @@ public class Datasource {
     }
 
 
-    public void updateProducts(String productName, double productPrice) throws SQLException {
 
-        queryProduct.setString(1, productName);
-        ResultSet results = queryProduct.executeQuery();
+    public void insertCard(String name, String email, String address, String phone) throws SQLException {
 
-        if (results.next()) {
+        try {
+            conn.setAutoCommit(false);
 
-            int products_id = results.getInt("id");
-
-            updateProducts.setDouble(1, productPrice);
-            updateProducts.setInt(2, products_id);
+            int customer_id = insertCustomer(name, email, address, phone);
 
 
-            int affectedRows = updateProducts.executeUpdate();
-            if (affectedRows == 1) {
-                System.out.println("updated successfully");
+            //Check if exist on product category already
+            queryCard.setInt(1, customer_id);
+
+            ResultSet card = queryCard.executeQuery();
+            if (card.next()) {
+                throw new SQLException("This card already exist and linked in the database");
             }
 
-            if (affectedRows != 1) {
-                throw new SQLException("Couldn't update product!");
-            }
-
-        } else {
-            System.out.println("product does not exist");
-        }
-    }
+            insertIntocards.setInt(1, customer_id);
+            insertIntocards.setString(2, new Timestamp(currentTimeMillis()).toString());
 
 
+            int affectedRows = insertIntocards.executeUpdate();
 
-    public void deleteProductCategory(String productName) throws SQLException {
-
-
-        queryProduct.setString(1, productName);
-        ResultSet results = queryProduct.executeQuery();
-
-        if (results.next()) {
-
-            int products_id = results.getInt("id");
-            //update products set active = 0 where id = products_id
-            deleteProductCategories.setInt(1,products_id);
-            deleteProducts.setInt(1, products_id);
-//            deleteProductCategories.executeQuery();
-
-            int affectedRows = deleteProductCategories.executeUpdate();
-            int affectedRows2 = deleteProducts.executeUpdate();
             if (affectedRows == 1) {
                 System.out.println("Commitment completed successfully");
+                conn.commit();
+            } else {
+                throw new SQLException("The card insert failed");
             }
 
-            if (affectedRows != 1) {
-                throw new SQLException("Couldn't delete product_category!");
+        } catch (SQLException e) {
+            System.out.println("Insert card exception: " + e.getMessage());
+            try {
+                System.out.println("Performing rollback");
+                conn.rollback();
+            } catch (SQLException e2) {
+                System.out.println("rollback failed " + e2.getMessage());
+            }
+        } finally {
+            try {
+                System.out.println("Resetting default commit behavior");
+                conn.setAutoCommit(true);
+            } catch (SQLException e) {
+                System.out.println("Couldn't reset auto-commit! " + e.getMessage());
             }
 
-            if (affectedRows2 != 1) {
-                throw new SQLException("Couldn't delete product");
-            }
-
-        } else {
-            System.out.println("product does not exist");
         }
+
     }
 
 
-    //inserting customer should insert card automaticaly
+    public int insertCustomer(String name, String email, String address, String phone) throws SQLException {
 
-    //change this method to a transaction
-    public int insertCustomer(String name, String email, String address, String phone ) throws SQLException{
 
         queryCustomer.setString(1, email);
         ResultSet results = queryCustomer.executeQuery();
@@ -600,7 +585,175 @@ public class Datasource {
 
     }
 
-    public void updateCustomers(String customerEmail , String customerNewName) throws SQLException {
+
+//    public int insertCustomer(String name, String email, String address, String phone) throws SQLException {
+//
+//
+//        queryCustomer.setString(1, email);
+//        ResultSet results = queryCustomer.executeQuery();
+//
+//        if (results.next()) {
+//
+//            return results.getInt("id");
+//
+//        } else {
+//
+//            insertIntoCustomers.setString(1, name);
+//            insertIntoCustomers.setString(2, email);
+//            insertIntoCustomers.setString(3, address);
+//            insertIntoCustomers.setString(4, phone);
+//            insertIntoCustomers.setString(5, new Timestamp(currentTimeMillis()).toString());
+//
+//            //this returns integer
+//            //execute will return boolean
+//            int affectedRows = insertIntoCustomers.executeUpdate();
+//            if (affectedRows == 1) {
+//                System.out.println("Commitment completed successfully");
+//            }
+//
+//            if (affectedRows != 1) {
+//                throw new SQLException("Couldn't insert customer!");
+//            }
+//
+//            ResultSet generatedKeys = insertIntoCustomers.getGeneratedKeys();
+//            if (generatedKeys.next()) {
+//                return generatedKeys.getInt(1);
+//            } else {
+//                throw new SQLException("Couldn't get id for customer");
+//            }
+//        }
+//
+//    }
+
+
+    public boolean checkProducts(String productName) throws SQLException {
+
+        queryProduct.setString(1, productName);
+        ResultSet results = queryProduct.executeQuery();
+
+        if (!results.next()) {
+            System.out.println("product does not exist");
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+
+    public void updateProducts(String productName, double productPrice) throws SQLException {
+
+        queryProduct.setString(1, productName);
+        ResultSet results = queryProduct.executeQuery();
+
+        if (results.next()) {
+
+            int products_id = results.getInt("id");
+
+            updateProducts.setDouble(1, productPrice);
+            updateProducts.setInt(2, products_id);
+
+
+            int affectedRows = updateProducts.executeUpdate();
+            if (affectedRows == 1) {
+                System.out.println("updated successfully");
+            }
+
+            if (affectedRows != 1) {
+                throw new SQLException("Couldn't update product!");
+            }
+
+        } else {
+            System.out.println("product does not exist");
+        }
+    }
+
+
+    public void deleteProductCategory(String productName) throws SQLException {
+
+
+        try {
+            conn.setAutoCommit(false);
+
+            queryProduct.setString(1, productName);
+            ResultSet results = queryProduct.executeQuery();
+
+            if (results.next()) {
+
+                int products_id = results.getInt("id");
+                //update products set active = 0 where id = products_id
+                deleteProductCategories.setInt(1, products_id);
+                deleteProducts.setInt(1, products_id);
+
+                int affectedRows = deleteProductCategories.executeUpdate();
+                int affectedRows2 = deleteProducts.executeUpdate();
+
+                if (affectedRows == 1 && affectedRows2 == 1) {
+                    System.out.println("Commitment completed successfully");
+                    conn.commit();
+                } else {
+                    throw new SQLException("The product category delete failed");
+                }
+            }
+
+        } catch (SQLException e) {
+            System.out.println("delete product category exception: " + e.getMessage());
+            try {
+                System.out.println("Performing rollback");
+                conn.rollback();
+            } catch (SQLException e2) {
+                System.out.println("rollback failed " + e2.getMessage());
+            }
+        } finally {
+            try {
+                System.out.println("Resetting default commit behavior");
+                conn.setAutoCommit(true);
+            } catch (SQLException e) {
+                System.out.println("Couldn't reset auto-commit! " + e.getMessage());
+            }
+        }
+
+    }
+
+
+//            if (affectedRows == 1) {
+//                System.out.println("Commitment completed successfully");
+//            }
+//
+//            if (affectedRows != 1) {
+//                throw new SQLException("Couldn't delete product_category!");
+//            }
+//
+//            if (affectedRows2 != 1) {
+//                throw new SQLException("Couldn't delete product");
+//            }
+//
+//        } else {
+//            System.out.println("product does not exist");
+//        }
+//    }
+
+
+    //inserting customer should insert card automaticaly
+
+    //change this method to a transaction
+
+    public boolean checkCustomers(String customerEmail) throws SQLException {
+
+        queryCustomer.setString(1, customerEmail);
+        ResultSet results = queryCustomer.executeQuery();
+
+        if (!results.next()) {
+            System.out.println("customer does not exist");
+            return false;
+        } else {
+        return true;
+    }
+
+}
+
+
+
+    public void updateCustomers(String customerEmail, String customerNewName) throws SQLException {
 
         queryCustomer.setString(1, customerEmail);
         ResultSet results = queryCustomer.executeQuery();
@@ -632,6 +785,51 @@ public class Datasource {
 
     public void deleteCustomers(String customerEmail) throws SQLException {
 
+        try {
+            conn.setAutoCommit(false);
+
+            queryCustomer.setString(1, customerEmail);
+            ResultSet results = queryCustomer.executeQuery();
+
+            if (results.next()) {
+
+                int customer_id = results.getInt("id");
+                //update customers set active = 0 where id = customer_id
+                deleteCustomers.setInt(1, customer_id);
+                deleteCards.setInt(1, customer_id);
+
+                int affectedRows = deleteCustomers.executeUpdate();
+                int affectedRows2 = deleteCards.executeUpdate();
+
+                if (affectedRows == 1 && affectedRows2 == 1) {
+                    System.out.println("Commitment completed successfully");
+                    conn.commit();
+                } else {
+                    throw new SQLException("The customer delete failed");
+                }
+            }
+
+        } catch (SQLException e) {
+            System.out.println("delete customer exception: " + e.getMessage());
+            try {
+                System.out.println("Performing rollback");
+                conn.rollback();
+            } catch (SQLException e2) {
+                System.out.println("rollback failed " + e2.getMessage());
+            }
+        } finally {
+            try {
+                System.out.println("Resetting default commit behavior");
+                conn.setAutoCommit(true);
+            } catch (SQLException e) {
+                System.out.println("Couldn't reset auto-commit! " + e.getMessage());
+            }
+        }
+
+    }
+
+
+    public void insertCardDetails(String customerEmail, String productName, int quantity) throws SQLException {
 
         queryCustomer.setString(1, customerEmail);
         ResultSet results = queryCustomer.executeQuery();
@@ -639,28 +837,60 @@ public class Datasource {
         if (results.next()) {
 
             int customer_id = results.getInt("id");
-            //update customers set active = 0 where id = customer_id
-            deleteCustomers.setInt(1,customer_id);
-            deleteCards.setInt(1, customer_id);
-//            deleteProductCategories.executeQuery();
 
-            int affectedRows = deleteCustomers.executeUpdate();
-            int affectedRows2 = deleteCards.executeUpdate();
+
+            queryCard.setInt(1, customer_id);
+            ResultSet rs = queryCard.executeQuery();
+
+            int card_id = rs.getInt("id");
+
+            queryProduct.setString(1, productName);
+            ResultSet result = queryProduct.executeQuery();
+
+            int product_id = result.getInt("id");
+            double price = result.getDouble("price");
+            int currency_id = result.getInt("currency_id");
+
+
+            insertIntoCard_details.setInt(1, card_id);
+            insertIntoCard_details.setInt(2, product_id);
+            insertIntoCard_details.setInt(3, quantity);
+            insertIntoCard_details.setInt(4, currency_id);
+            insertIntoCard_details.setDouble(5, (quantity * price));
+            insertIntoCard_details.setString(6, new Timestamp(currentTimeMillis()).toString());
+
+            int affectedRows = insertIntoCard_details.executeUpdate();
             if (affectedRows == 1) {
-                System.out.println("deleted successfully");
+                System.out.println("Commitment completed successfully");
             }
 
-//            if (affectedRows != 1) {
-//                throw new SQLException("Couldn't delete customer!");
-//            }
-
-//            if (affectedRows2 != 1) {
-                else {throw new SQLException("Couldn't delete customer");
+            if (affectedRows != 1) {
+                throw new SQLException("Couldn't insert card details!");
             }
-
-        } else {
-            System.out.println("customer does not exist");
+        }else {
+                throw new SQLException("Ccustomer does not exist");
+            }
         }
-    }
+
 
 }
+
+
+//            if (affectedRows == 1) {
+//                System.out.println("deleted successfully");
+//            }
+//
+////            if (affectedRows != 1) {
+////                throw new SQLException("Couldn't delete customer!");
+////            }
+//
+////            if (affectedRows2 != 1) {
+//                else {throw new SQLException("Couldn't delete customer");
+//            }
+//
+//        } else {
+//            System.out.println("customer does not exist");
+//        }
+//    }
+//
+//}
